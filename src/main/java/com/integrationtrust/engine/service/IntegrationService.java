@@ -4,6 +4,7 @@ package com.integrationtrust.engine.service;
 import com.integrationtrust.engine.entity.Integration;
 import com.integrationtrust.engine.repository.IntegrationRepository;
 
+import com.integrationtrust.engine.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,21 +37,19 @@ public class IntegrationService {
     }
 
     // Consultar uma integracao pelo ID
-    @Transactional(readOnly = true)
-    public Integration findById(Long id) {
-
-        if (id == null || id <= 0) {
-            throw new IllegalArgumentException(
-                "ID da integracao invalido."
-            );
-        }
-
-        return repository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException(
-                "Integracao nao encontrada: " + id
-            ));
+  @Transactional(readOnly = true)
+public Integration findById(Long id) {
+    if (id == null || id <= 0) {
+        throw new IllegalArgumentException(
+            "ID da integracao invalido."
+        );
     }
 
+    return repository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException(
+            "Integracao nao encontrada: " + id
+        ));
+}
     // Atualizar uma integracao existente
     public Integration update(Long id, Integration updatedData) {
 
