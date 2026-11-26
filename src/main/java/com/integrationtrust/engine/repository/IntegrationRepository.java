@@ -1,7 +1,8 @@
-
 package com.integrationtrust.engine.repository;
 
 import com.integrationtrust.engine.entity.Integration;
+import com.integrationtrust.engine.enums.OperationalStatus;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,22 +13,20 @@ import java.util.List;
 public interface IntegrationRepository
         extends JpaRepository<Integration, Long> {
 
-    // Buscar integracoes pela situacao operacional
-    List<Integration> findByOperationalStatus(String status);
+    List<Integration> findByOperationalStatus(
+        OperationalStatus status
+    );
 
-    // Buscar certificados vencidos
     List<Integration> findByCertificateExpirationDateBefore(
-            LocalDate date
+        LocalDate date
     );
 
-    // Buscar certificados que vencem em determinado periodo
     List<Integration> findByCertificateExpirationDateBetween(
-            LocalDate startDate,
-            LocalDate endDate
+        LocalDate startDate,
+        LocalDate endDate
     );
 
-    // Buscar integracoes pelo responsavel tecnico
     List<Integration> findByTechnicalOwnerIgnoreCase(
-            String technicalOwner
+        String technicalOwner
     );
 }
