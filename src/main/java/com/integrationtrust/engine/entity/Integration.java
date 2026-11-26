@@ -1,6 +1,6 @@
 
 package com.integrationtrust.engine.entity;
-
+import com.integrationtrust.engine.enums.OperationalStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -39,9 +39,9 @@ public class Integration {
     @Column(nullable = false)
     private LocalDate certificateExpirationDate;
 
-    @NotBlank
-    @Column(nullable = false, length = 30)
-    private String operationalStatus;
+   @Enumerated(EnumType.STRING)
+   @Column(nullable = false, length = 30)
+   private OperationalStatus operationalStatus;
 
     public Integration() {
     }
@@ -98,11 +98,11 @@ public class Integration {
         this.certificateExpirationDate = certificateExpirationDate;
     }
 
-    public String getOperationalStatus() {
-        return operationalStatus;
-    }
+public OperationalStatus getOperationalStatus() {
+    return operationalStatus;
+}
 
-    public void setOperationalStatus(String operationalStatus) {
-        this.operationalStatus = operationalStatus;
-    }
+public void setOperationalStatus(OperationalStatus operationalStatus) {
+    this.operationalStatus = operationalStatus;
+}
 }
