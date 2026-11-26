@@ -4,6 +4,7 @@ package com.integrationtrust.engine.service;
 import com.integrationtrust.engine.entity.Integration;
 import com.integrationtrust.engine.repository.IntegrationRepository;
 
+import com.integrationtrust.engine.enums.OperationalStatus;
 import com.integrationtrust.engine.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,15 +87,24 @@ public Integration findById(Long id) {
     }
 
     // Filtrar integracoes pela situacao operacional
-    @Transactional(readOnly = true)
-    public List<Integration> findByStatus(String status) {
+@Transactional(readOnly = true)
+public List<Integration> findByStatus(String status) {
+    OperationalStatus operationalStatus;
 
-        validateStatus(status);
-
-        return repository.findByOperationalStatus(
+    try {
+        operationalStatus = OperationalStatus.valueOf(
             status.trim().toUpperCase()
         );
+    } catch (IllegalArgumentException | NullPointerException exception) {
+        throw new IllegalArgumentException(
+            "Situacao invalida. Utilize ACTIVE, INACTIVE ou MAINTENANCE."
+        );
     }
+
+    return repository.findByOperationalStatus(
+        operationalStatus.name()
+    );
+}
 
     // Consultar certificados vencidos
     @Transactional(readOnly = true)
@@ -156,24 +166,11 @@ public Integration findById(Long id) {
         }
     }
 
-    // Validar situacoes permitidas
-    private void validateStatus(String status) {
-
-        if (status == null) {
-            throw new IllegalArgumentException(
-                "Situacao operacional obrigatoria."
-            );
-        }
-
-        String normalized = status.trim().toUpperCase();
-
-        if (!normalized.equals("ACTIVE")
-                && !normalized.equals("INACTIVE")
-                && !normalized.equals("MAINTENANCE")) {
-
-            throw new IllegalArgumentException(
-                "Situacao invalida. Utilize ACTIVE, INACTIVE ou MAINTENANCE."
-            );
-        }
+ private void validateStatus(OperationalStatus status) {
+    if (status == null) {
+        throw new IllegalArgumentException(
+            "Situacao operacional obrigatoria."
+        );
     }
+}
 }
