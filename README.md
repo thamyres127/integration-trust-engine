@@ -2,7 +2,8 @@
 
 Plataforma de governança, observabilidade e gerenciamento de integrações críticas entre sistemas financeiros, desenvolvida com foco em confiabilidade operacional, telemetria em tempo real e segurança de comunicação.
 
-🔗 **Demonstração (Front-end):** https://github.io  
+🔗 **Demonstração (Front-end):** https://thamyres127.github.io/integration-trust-engine/  
+💻 **Repositório (GitHub):** https://github.com  
 ⚙️ **API Back-end (Render):** https://onrender.com
 
 ---
@@ -56,8 +57,8 @@ integration-trust-engine/
 
 ### 1. Clonar o repositório
 ```bash
-git clone https://github.com
-cd SEU-REPOSITORIO
+git clone https://github.com.git
+cd integration-trust-engine
 ```
 
 ### 2. Configurar as variáveis de ambiente
