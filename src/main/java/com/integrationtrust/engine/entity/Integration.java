@@ -39,10 +39,10 @@ public class Integration {
     @Column(nullable = false)
     private LocalDate certificateExpirationDate;
 
-   @Enumerated(EnumType.STRING)
-   @Column(nullable = false, length = 30)
-   private OperationalStatus operationalStatus;
-
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
+    private OperationalStatus operationalStatus;
     public Integration() {
     }
 
