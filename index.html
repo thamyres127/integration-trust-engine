@@ -1,0 +1,916 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integration Trust Engine</title>
+
+    <style>
+        :root {
+            --background: #111827;
+            --sidebar: #0B1220;
+            --surface: #1E293B;
+            --primary: #38BDF8;
+            --purple: #A78BFA;
+            --green: #10B981;
+            --red: #F87171;
+            --yellow: #FBBF24;
+            --text: #F8FAFC;
+            --muted: #94A3B8;
+            --border: rgba(148, 163, 184, 0.14);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Inter, Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: var(--sidebar);
+            border-right: 1px solid var(--border);
+            padding: 28px 18px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 45px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #38BDF8, #818CF8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+            color: #0B1220;
+            font-weight: bold;
+        }
+
+        .brand h1 {
+            font-size: 14px;
+            letter-spacing: 0.3px;
+        }
+
+        .brand span {
+            display: block;
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .menu-label {
+            font-size: 10px;
+            color: #64748B;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            margin: 0 0 14px 10px;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .menu button {
+            border: none;
+            background: transparent;
+            color: var(--muted);
+            text-align: left;
+            padding: 13px 12px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .menu button:hover,
+        .menu button.active {
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--primary);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 15px 10px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .main {
+            flex: 1;
+            min-width: 0;
+            padding: 30px 35px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 35px;
+        }
+
+        .topbar h2 {
+            font-size: 23px;
+            font-weight: 600;
+        }
+
+        .topbar p {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 7px;
+        }
+
+        .environment {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 13px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .online-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 10px var(--green);
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 17px;
+        }
+
+        .section-heading h3 {
+            font-size: 15px;
+        }
+
+        .section-heading span {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .metric-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            padding: 20px;
+            min-height: 135px;
+        }
+
+        .metric-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--muted);
+            font-size: 11px;
+            gap: 5px;
+        }
+
+        .metric-icon {
+            font-size: 18px;
+        }
+
+        .metric-value {
+            font-size: 29px;
+            font-weight: 700;
+            margin: 17px 0 7px;
+        }
+
+        .metric-description {
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        .blue { color: var(--primary); }
+        .green { color: var(--green); }
+        .red { color: var(--red); }
+        .yellow { color: var(--yellow); }
+        .purple { color: var(--purple); }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 310px;
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            padding: 22px;
+            min-width: 0;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+
+        .panel-header h3 {
+            font-size: 14px;
+        }
+
+        .panel-header span {
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        .status-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-info {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            font-size: 12px;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+        }
+
+        .status-count {
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .alert-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px;
+            border-radius: 9px;
+            background: rgba(248, 113, 113, 0.08);
+            border: 1px solid rgba(248, 113, 113, 0.18);
+            margin-bottom: 12px;
+        }
+
+        .alert-card.warning {
+            background: rgba(251, 191, 36, 0.08);
+            border-color: rgba(251, 191, 36, 0.18);
+        }
+
+        .alert-icon {
+            font-size: 17px;
+        }
+
+        .alert-card strong {
+            font-size: 11px;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .alert-card p {
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        .table-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            padding: 22px;
+        }
+
+        .table-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-input {
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            color: var(--text);
+            padding: 9px 12px;
+            outline: none;
+            font-size: 11px;
+            width: 190px;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+        }
+
+        .primary-button {
+            border: none;
+            border-radius: 7px;
+            background: var(--primary);
+            color: #082F49;
+            padding: 10px 14px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .primary-button:hover {
+            filter: brightness(1.1);
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 650px;
+        }
+
+        th {
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 500;
+            text-align: left;
+            padding: 13px 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            font-size: 11px;
+            padding: 16px 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .integration-name {
+            font-weight: 600;
+        }
+
+        .integration-id {
+            color: var(--muted);
+            font-size: 9px;
+            margin-top: 5px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: bold;
+        }
+
+        .badge.active {
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--green);
+        }
+
+        .badge.inactive {
+            background: rgba(248, 113, 113, 0.12);
+            color: var(--red);
+        }
+
+        .badge.maintenance {
+            background: rgba(167, 139, 250, 0.12);
+            color: var(--purple);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .footer {
+            text-align: center;
+            color: #64748B;
+            font-size: 10px;
+            margin-top: 25px;
+        }
+
+        @media (max-width: 1100px) {
+            .metrics {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 15px;
+            }
+
+            .brand {
+                margin-bottom: 20px;
+            }
+
+            .menu {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .menu-label,
+            .sidebar-footer {
+                display: none;
+            }
+
+            .menu button {
+                font-size: 11px;
+                padding: 10px;
+            }
+
+            .main {
+                padding: 22px 15px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+            }
+
+            .topbar h2 {
+                font-size: 19px;
+            }
+
+            .environment {
+                font-size: 9px;
+            }
+
+            .metrics {
+                gap: 10px;
+            }
+
+            .metric-card {
+                padding: 14px;
+            }
+
+            .metric-value {
+                font-size: 24px;
+            }
+
+            .table-actions {
+                flex-wrap: wrap;
+            }
+
+            .search-input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">IT</div>
+            <div>
+                <h1>INTEGRATION TRUST</h1>
+                <span>ENGINE · GOVERNANCE</span>
+            </div>
+        </div>
+
+        <p class="menu-label">WORKSPACE</p>
+
+        <nav class="menu">
+            <button class="active" type="button">▦ Dashboard</button>
+            <button type="button" onclick="showNotice('Integrações')">⇄ Integrações</button>
+            <button type="button" onclick="showNotice('Certificados')">◇ Certificados</button>
+            <button type="button" onclick="showNotice('Monitoramento')">◉ Monitoramento</button>
+        </nav>
+
+        <div class="sidebar-footer">
+            <strong>Integration Trust Engine</strong><br>
+            Versão 1.0.0<br>
+            Plataforma de governança técnica
+        </div>
+
+    </aside>
+
+    <main class="main">
+
+        <header class="topbar">
+            <div>
+                <h2>Visão geral</h2>
+                <p>Monitore suas integrações e acompanhe os riscos operacionais.</p>
+            </div>
+
+            <div class="environment">
+                <span class="online-dot"></span>
+                Interface demonstrativa
+            </div>
+        </header>
+
+        <div class="section-heading">
+            <h3>Indicadores operacionais</h3>
+            <span>Dados demonstrativos</span>
+        </div>
+
+        <section class="metrics">
+
+            <div class="metric-card">
+                <div class="metric-top">
+                    Total de integrações
+                    <span class="metric-icon blue">⇄</span>
+                </div>
+                <div class="metric-value" id="totalIntegrations">3</div>
+                <div class="metric-description">Integrações cadastradas</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-top">
+                    Integrações ativas
+                    <span class="metric-icon green">●</span>
+                </div>
+                <div class="metric-value green" id="activeIntegrations">2</div>
+                <div class="metric-description">Operações em andamento</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-top">
+                    Certificados vencidos
+                    <span class="metric-icon red">⚠</span>
+                </div>
+                <div class="metric-value red" id="expiredCertificates">1</div>
+                <div class="metric-description">Exigem atenção imediata</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-top">
+                    Próximos vencimentos
+                    <span class="metric-icon yellow">◷</span>
+                </div>
+                <div class="metric-value yellow" id="expiringCertificates">1</div>
+                <div class="metric-description">Vencimento nos próximos 30 dias</div>
+            </div>
+
+        </section>
+
+        <div class="content-grid">
+
+            <section class="panel">
+
+                <div class="panel-header">
+                    <h3>Situação das integrações</h3>
+                    <span>Distribuição operacional</span>
+                </div>
+
+                <div class="status-list">
+
+                    <div class="status-item">
+                        <div class="status-info">
+                            <span class="status-dot" style="background:#10B981"></span>
+                            Ativas
+                        </div>
+                        <span class="status-count green" id="activeStatus">2</span>
+                    </div>
+
+                    <div class="status-item">
+                        <div class="status-info">
+                            <span class="status-dot" style="background:#F87171"></span>
+                            Inativas
+                        </div>
+                        <span class="status-count red" id="inactiveStatus">0</span>
+                    </div>
+
+                    <div class="status-item">
+                        <div class="status-info">
+                            <span class="status-dot" style="background:#A78BFA"></span>
+                            Em manutenção
+                        </div>
+                        <span class="status-count purple" id="maintenanceStatus">1</span>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section class="panel">
+
+                <div class="panel-header">
+                    <h3>Alertas de certificados</h3>
+                    <span>Monitoramento</span>
+                </div>
+
+                <div class="alert-card">
+                    <span class="alert-icon">⚠</span>
+                    <div>
+                        <strong>Certificado vencido</strong>
+                        <p>API de Autenticacao precisa de renovação.</p>
+                    </div>
+                </div>
+
+                <div class="alert-card warning">
+                    <span class="alert-icon">◷</span>
+                    <div>
+                        <strong>Vencimento próximo</strong>
+                        <p>API de Fornecedor requer acompanhamento.</p>
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+
+        <section class="table-panel">
+
+            <div class="panel-header">
+                <div>
+                    <h3>Integrações cadastradas</h3>
+                    <span>Inventário de integrações técnicas</span>
+                </div>
+
+                <div class="table-actions">
+                    <input
+                        class="search-input"
+                        id="searchInput"
+                        type="search"
+                        placeholder="Pesquisar integração..."
+                        oninput="filterIntegrations()"
+                    >
+
+                    <button class="primary-button" type="button"
+                        onclick="showNotice('Cadastro de integração')">
+                        + Nova integração
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>INTEGRAÇÃO</th>
+                            <th>ORIGEM</th>
+                            <th>DESTINO</th>
+                            <th>RESPONSÁVEL</th>
+                            <th>VALIDADE</th>
+                            <th>SITUAÇÃO</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="integrationTable"></tbody>
+                </table>
+
+            </div>
+
+        </section>
+
+        <footer class="footer">
+            Integration Trust Engine · Governança e monitoramento de integrações técnicas
+        </footer>
+
+    </main>
+
+</div>
+
+<script>
+    // Dados temporários para demonstrar o dashboard.
+    // Depois serão substituídos pelas informações da API Java.
+
+    const integrations = [
+        {
+            id: 1,
+            name: "API de Fornecedor",
+            source: "Internal System",
+            target: "External Platform",
+            owner: "Integration Team",
+            expiration: "2026-12-10",
+            status: "ACTIVE"
+        },
+        {
+            id: 2,
+            name: "API de Autenticacao",
+            source: "Identity Service",
+            target: "Partner Gateway",
+            owner: "Security Team",
+            expiration: "2026-11-20",
+            status: "ACTIVE"
+        },
+        {
+            id: 3,
+            name: "API de Relatorios",
+            source: "Reporting System",
+            target: "Data Platform",
+            owner: "Data Engineering",
+            expiration: "2027-06-15",
+            status: "MAINTENANCE"
+        }
+    ];
+
+    function formatDate(date) {
+        const [year, month, day] = date.split("-");
+        return `${day}/${month}/${year}`;
+    }
+
+    function getCertificateStatus(date) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const expiration = new Date(date + "T00:00:00");
+        const difference = Math.ceil(
+            (expiration - today) / (1000 * 60 * 60 * 24)
+        );
+
+        if (difference < 0) {
+            return "Vencido";
+        }
+
+        if (difference <= 30) {
+            return "Próximo";
+        }
+
+        return "Válido";
+    }
+
+    function renderTable(data) {
+        const table = document.getElementById("integrationTable");
+
+        if (data.length === 0) {
+            table.innerHTML = `
+                <tr>
+                    <td colspan="6" class="empty-state">
+                        Nenhuma integração encontrada.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        table.innerHTML = data.map(item => {
+
+            const statusClass = {
+                ACTIVE: "active",
+                INACTIVE: "inactive",
+                MAINTENANCE: "maintenance"
+            }[item.status];
+
+            const statusLabel = {
+                ACTIVE: "Ativa",
+                INACTIVE: "Inativa",
+                MAINTENANCE: "Manutenção"
+            }[item.status];
+
+            const certificateStatus = getCertificateStatus(
+                item.expiration
+            );
+
+            return `
+                <tr>
+                    <td>
+                        <div class="integration-name">${item.name}</div>
+                        <div class="integration-id">ID #${item.id}</div>
+                    </td>
+                    <td>${item.source}</td>
+                    <td>${item.target}</td>
+                    <td>${item.owner}</td>
+                    <td>
+                        ${formatDate(item.expiration)}
+                        <div class="integration-id">${certificateStatus}</div>
+                    </td>
+                    <td>
+                        <span class="badge ${statusClass}">
+                            ${statusLabel}
+                        </span>
+                    </td>
+                </tr>
+            `;
+        }).join("");
+    }
+
+    function updateDashboard() {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const limit = new Date(today);
+        limit.setDate(limit.getDate() + 30);
+
+        const active = integrations.filter(
+            item => item.status === "ACTIVE"
+        ).length;
+
+        const inactive = integrations.filter(
+            item => item.status === "INACTIVE"
+        ).length;
+
+        const maintenance = integrations.filter(
+            item => item.status === "MAINTENANCE"
+        ).length;
+
+        const expired = integrations.filter(item => {
+            return new Date(item.expiration + "T00:00:00") < today;
+        }).length;
+
+        const expiring = integrations.filter(item => {
+            const date = new Date(item.expiration + "T00:00:00");
+            return date >= today && date <= limit;
+        }).length;
+
+        document.getElementById("totalIntegrations").textContent =
+            integrations.length;
+
+        document.getElementById("activeIntegrations").textContent = active;
+        document.getElementById("expiredCertificates").textContent = expired;
+        document.getElementById("expiringCertificates").textContent = expiring;
+
+        document.getElementById("activeStatus").textContent = active;
+        document.getElementById("inactiveStatus").textContent = inactive;
+        document.getElementById("maintenanceStatus").textContent = maintenance;
+
+        renderTable(integrations);
+    }
+
+    function filterIntegrations() {
+        const search = document.getElementById("searchInput")
+            .value.toLowerCase();
+
+        const filtered = integrations.filter(item => {
+            return (
+                item.name.toLowerCase().includes(search) ||
+                item.source.toLowerCase().includes(search) ||
+                item.target.toLowerCase().includes(search) ||
+                item.owner.toLowerCase().includes(search)
+            );
+        });
+
+        renderTable(filtered);
+    }
+
+    function showNotice(section) {
+        alert(
+            section +
+            " ainda está em desenvolvimento. " +
+            "Vamos implementar essa funcionalidade nas próximas etapas."
+        );
+    }
+
+    updateDashboard();
+</script>
+
+</body>
+</html>
