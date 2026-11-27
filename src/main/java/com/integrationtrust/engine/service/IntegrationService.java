@@ -101,9 +101,7 @@ public List<Integration> findByStatus(String status) {
         );
     }
 
-    return repository.findByOperationalStatus(
-        operationalStatus.name()
-    );
+    return repository.findByOperationalStatus(operationalStatus);
 }
 
     // Consultar certificados vencidos
