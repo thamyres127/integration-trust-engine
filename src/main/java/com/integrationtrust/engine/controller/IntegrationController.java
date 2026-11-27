@@ -12,8 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "https://thamyres127.github.io")
 @RestController
-@RequestMapping("/api/integrations")
+@RequestMapping("/api/integrations") 
 public class IntegrationController {
 
     private final IntegrationService service;
